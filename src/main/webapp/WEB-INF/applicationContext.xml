@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	xmlns:mybatis="http://mybatis.org/schema/mybatis-spring"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:p="http://www.springframework.org/schema/p"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:tx="http://www.springframework.org/schema/tx"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+			            http://www.springframework.org/schema/beans/spring-beans-4.3.xsd
+			            http://www.springframework.org/schema/context
+			            http://www.springframework.org/schema/context/spring-context-4.3.xsd
+			            http://www.springframework.org/schema/mvc
+			            http://www.springframework.org/schema/mvc/spring-mvc-4.3.xsd
+			            http://www.springframework.org/schema/tx
+			            http://www.springframework.org/schema/tx/spring-tx-4.3.xsd
+			            http://mybatis.org/schema/mybatis-spring 
+			            http://mybatis.org/schema/mybatis-spring.xsd ">
+			      
+	 <!-- mybatis:scan会扫描org.fkit.dao包里的所有接口当作Spring的bean配置，之后可以进行依赖注入-->  
+    <mybatis:scan base-package="org.seckill.dao"/>   
+       
+	 <!-- 扫描org.seckill包下面的java文件，有Spring的相关注解的类，则把这些类注册为Spring的bean -->
+    <context:component-scan base-package="org.seckill"/>
+    
+    <!-- 使用PropertyOverrideConfigurer后处理器加载数据源参数 -->
+	<context:property-override location="classpath:mysql-db.properties"/>
+	<!-- 配置c3p0数据源 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource">
+		 <!--配置连接池属性 以下方法有问题-->
+<!--         <property name="driverClass" value="${driver}"/> -->
+<!--         <property name="jdbcUrl" value="${url}"/> -->
+<!--         <property name="user" value="${username}"/> -->
+<!--         <property name="password" value="${password}"/> -->
+
+        <!--c3p0的私有属性-->
+<!--         <property name="maxPoolSize" value="30"/> -->
+<!--         <property name="minPoolSize" value="10"/> -->
+        <!--关闭连接后不自动commit-->
+<!--         <property name="autoCommitOnClose" value="false"/> -->
+        <!--获取连接超时时间-->
+<!--         <property name="checkoutTimeout" value="5000"/> -->
+        <!--当获取连接失败后重试次数-->
+<!--         <property name="acquireRetryAttempts" value="2"/> -->
+	</bean>
+	
+	<!-- 自动扫描 将Mapper接口生成代理注入到Spring;自动扫描方式创建mapper bean -->
+	<bean class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+		<!-- basePackage：扫描器开始扫描的基础包名，支持嵌套扫描； -->
+        <property name="basePackage" value="org.seckill.dao" />
+    </bean>
+    
+    <!-- 通过在mybatis sql映射配置文件中添加databaseId的属性，来区分不同的数据库。 -->
+    <!-- mybatis3.1.0之后就内在的支持multi-db了，可以在select/update/delete/insert加上databaseId的方式来标识不同的数据库 -->
+	<!-- 以下配置用于决定当前databaseId的名称。在每一个property标签中，name代表数据库的productName（DatabaseMetaData#getDatabaseProductName()），
+			value是用户自定义的databaseId名称。mybatis在初始化的时候会根据所使用的数据源得到当前databaseId的名称，
+			得到的databaseId的名称供mybatis选择映射文件中相应的语句。比如我们使用的是Mysql数据库，则得到的databaseId名称为“mysql”。
+	 -->
+<!-- 	<bean id="vendorProperties" class="org.springframework.beans.factory.config.PropertiesFactoryBean"> -->
+<!-- 	  <property name="properties"> -->
+<!-- 	    <props> -->
+<!-- 	      <prop key="SQL Server">sqlserver</prop> -->
+<!-- 	      <prop key="DB2">db2</prop> -->
+<!-- 	      <prop key="SQLite">sqlite</prop> -->
+<!-- 	      <prop key="SQLite">oracle</prop> -->
+<!-- 	      <prop key="MySQL">mysql</prop> -->
+<!-- 	      <prop key="H2">h2</prop> -->
+<!-- 	    </props> -->
+<!-- 	  </property> -->
+<!-- 	</bean> -->
+	
+	<!--如果配置了 databaseIdProvider，MyBatis 会加载所有的不带 databaseId 或匹配当前 databaseId 的语句；
+			如果带或者不带的语句都有，则不带的会被忽略”。
+			也就是说如果在mybatis的配置文件中没有配置 databaseIdProvider，则在映射文件中配置的databaseId不会生效。
+	 -->
+<!-- 	<bean id="databaseIdProvider" class="org.apache.ibatis.mapping.VendorDatabaseIdProvider"> -->
+<!-- 	  <property name="properties" ref="vendorProperties"/> -->
+<!-- 	</bean> -->
+	
+	<!-- 配置SqlSessionFactory，org.mybatis.spring.SqlSessionFactoryBean是Mybatis社区开发用于整合Spring的bean -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <!--配置mybatis全局配置文件mybatis-config-->
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+        <!--扫描entity包使用别名 -->
+        <property name="typeAliasesPackage" value="org.seckill.entity"/>
+<!--         <property name="databaseIdProvider" ref="databaseIdProvider" /> -->
+        <property name="mapperLocations" value="classpath*:mapper/*.xml" />
+    </bean>
+    
+	<!-- JDBC事务管理器 -->
+	<bean id="transactionManager"  class="org.springframework.jdbc.datasource.DataSourceTransactionManager" p:dataSource-ref="dataSource"/>
+	
+	<!-- 启用支持annotation注解方式事务管理 配置为默认使用-->
+	<tx:annotation-driven transaction-manager="transactionManager"/>
+	
+	<!-- 加载mysql数据源 -->
+	<!-- profile:在Spring容器中所定义的Bean的逻辑组名称，只有当这些Profile被激活的时候，才会将Profile中所对应的Bean注册到Spring容器中 -->
+	<!-- 通过Profile配置，Spring可以在根据环境在运行阶段来决定bean的创建与否 -->
+<!-- 	<beans profile="mysql">   -->
+       <!-- 使用PropertyOverrideConfigurer后处理器加载数据源参数 -->
+<!-- 		<context:property-override location="classpath*:mysql-db.properties"/> -->
+<!--     </beans> -->
+    <!-- 加载sqlite数据源 -->
+<!-- 	<beans profile="sqlite">   -->
+       <!-- 使用PropertyOverrideConfigurer后处理器加载数据源参数 -->
+<!-- 		<context:property-override location="classpath*:sqlite-db.properties"/> -->
+<!--     </beans> -->
+</beans>
