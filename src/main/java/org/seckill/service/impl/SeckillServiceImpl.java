@@ -34,7 +34,7 @@ public class SeckillServiceImpl implements SeckillService {
     @Autowired
     private SuccessKilledDao successKilledDao;
     //md5盐值字符串，用于混淆MD5
-    private final String slat="dasdqw90e2334i9kdasdr0osaflaf[qw";
+    private final String slat="dasdqw90e2334i9kdasdr0osaflafqw";
 
     public List<Seckill> getSeckillList() {
         return seckillDao.queryAll(0,4);
@@ -58,7 +58,7 @@ public class SeckillServiceImpl implements SeckillService {
             return new Exposer(false,seckillId,nowTime.getTime(),startTime.getTime(),endTime.getTime());
         }
         //转化特定字符串的过程，不可逆
-        String md5=null;//todo
+        String md5=getMd5(seckillId);
         return new Exposer(true,md5,seckillId);
     }
 
@@ -75,7 +75,7 @@ public class SeckillServiceImpl implements SeckillService {
      * 3：不是所有的方法都需要事务，如只有一条修改操作，只读操作不需要事务控制
      */
     public SeckillExecution excuteSeckill(long seckillId, long userPhone, String md5) throws SeckillException, RepeatKillException, SeckillCloseException {
-        if(md5==null||md5.endsWith(getMd5(seckillId))){
+        if(md5==null||!md5.equals(getMd5(seckillId))){
             throw new SeckillException("seckill data rewrite");
         }
         //执行秒杀逻辑：减库存+记录购买行为

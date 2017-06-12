@@ -3,6 +3,7 @@ package org.seckill.service;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.seckill.dto.Exposer;
+import org.seckill.dto.SeckillExecution;
 import org.seckill.entity.Seckill;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,6 +48,10 @@ public class SeckilledServiceTest {
     @Test
     public void testExcuteSeckill(){
         long id=1000;
+        long phone=13502171128L;
+        String md5="bebc9dd84575bf7e57619edbdf3e103a";
+        SeckillExecution execution=seckillService.excuteSeckill(id,phone,md5);
+        logger.info("result={}",execution);
 
     }
 }
