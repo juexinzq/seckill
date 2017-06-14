@@ -3,5 +3,5 @@
 ### 项目架构：Spring+SpringMVC+MyBatis
 
 ### 运行效果：
-![秒杀列表页](https://github.com/suxiongwei/seckill/blob/master/src/main/webapp/resources/script/images/list.png)
-![秒杀详情页](https://github.com/suxiongwei/seckill/blob/master/src/main/webapp/resources/script/images/detail.png)
+![秒杀列表页](https://github.com/suxiongwei/seckill/blob/master/src/main/webapp/resources/images/list.png)
+![秒杀详情页](https://github.com/suxiongwei/seckill/blob/master/src/main/webapp/resources/images/detail.png)
