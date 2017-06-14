@@ -69,6 +69,7 @@
       <artifactId>standard</artifactId>
       <version>1.1.2</version>
     </dependency>
+
     <!--默认的标签库JSP标准标签库（JSTL）是一个JSP标签集合，它封装了JSP应用的通用核心功能。-->
     <dependency>
       <groupId>jstl</groupId>
@@ -83,11 +84,11 @@
     </dependency>
 
     <!--servlet 相关的接口-->
-    <dependency>
-      <groupId>javax.servlet</groupId>
-      <artifactId>javax.servlet-api</artifactId>
-      <version>3.1.0</version>
-    </dependency>
+    <!--<dependency>-->
+      <!--<groupId>javax.servlet</groupId>-->
+      <!--<artifactId>javax.servlet-api</artifactId>-->
+      <!--<version>3.1.0</version>-->
+    <!--</dependency>-->
 
     <!--spring依赖-->
     <!--spring核心依赖-->
@@ -140,6 +141,29 @@
           <artifactId>junit-jupiter-api</artifactId>
           <version>RELEASE</version>
       </dependency>
+    <!--redis客户端:Jedis-->
+    <dependency>
+      <groupId>redis.clients</groupId>
+      <artifactId>jedis</artifactId>
+      <version>2.7.3</version>
+    </dependency>
+    <!--protostuff序列化依赖-->
+    <dependency>
+      <groupId>com.dyuproject.protostuff</groupId>
+      <artifactId>protostuff-core</artifactId>
+      <version>1.0.8</version>
+    </dependency>
+    <dependency>
+      <groupId>com.dyuproject.protostuff</groupId>
+      <artifactId>protostuff-runtime</artifactId>
+      <version>1.0.8</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-collections</groupId>
+      <artifactId>commons-collections</artifactId>
+      <version>3.2</version>
+    </dependency>
   </dependencies>
   <build>
     <finalName>seckill</finalName>

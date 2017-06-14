@@ -93,6 +93,13 @@
 	
 	<!-- 启用支持annotation注解方式事务管理 配置为默认使用-->
 	<tx:annotation-driven transaction-manager="transactionManager"/>
+
+	<!--RedissDao 真正上线时应该把相关配置放在配置文件中-->
+	<bean id="redisDao" class="org.seckill.dao.cache.RedisDao">
+		<!--构造注入-->
+		<constructor-arg index="0" value="localhost"/>
+		<constructor-arg index="1" value="6379"/>
+	</bean>
 	
 	<!-- 加载mysql数据源 -->
 	<!-- profile:在Spring容器中所定义的Bean的逻辑组名称，只有当这些Profile被激活的时候，才会将Profile中所对应的Bean注册到Spring容器中 -->
